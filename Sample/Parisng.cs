@@ -1,17 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using CsvHelper;
 
 namespace Sample
 {
     namespace Json
     {
-        public class Json
+        internal class Json
         {
             // Using Text.Json
-            public async Task FileJson_Ser_Des_Async(Person person)
+            private async Task FileJson_Ser_Des_Async(Person person)
             {
 
                 string file = "user.json";
@@ -48,15 +52,50 @@ namespace Sample
     }
     namespace CSV
     {
-        public class CSV
+        internal class CSV
         {
+            // Using CsvHelper
+            private string path = @"C:\SomeDir2\Simple_CSV.csv";
 
+            private void WriteObject(string path)
+            {
+                var records = new List<Person>
+                {
+                    new Person { Id = 1, Name = "Ivan" },
+                    new Person { Id = 2, Name = "Max" },
+                    new Person { Id = 3, Name = "Elena" },
+                };
+
+                using (var writer = new StreamWriter(path))
+
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.WriteRecords(records);
+                }
+            }
+
+            private List<Person> ReadObjects(string path)
+            {
+                using (var reader = new StreamReader(path))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    var records = csv.GetRecords<Person>().ToList();
+
+                    return records;
+                }
+            }
+
+            private class Person
+            {
+                public int Id { get; set; }
+                public string Name { get; set; }
+            }
         }
 
     }
-    namespace Excell
+    namespace Excel
     {
-        public class Excell
+        public class Excel
         {
 
         }
@@ -65,5 +104,9 @@ namespace Sample
     namespace XML
     {
         public class Xml { }
+    }
+    namespace PDF
+    {
+        public class PDF { }
     }
 }
