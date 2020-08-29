@@ -259,6 +259,11 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+<<<<<<< HEAD
 /Test
 /Sample.sln
 /Sample/Sample.csproj
+=======
+/Night.sln
+/Night/Night.csproj
+>>>>>>> f5e1ae3135ded51582764b5681e205aa8d9bc831
