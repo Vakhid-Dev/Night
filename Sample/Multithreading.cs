@@ -43,7 +43,7 @@ namespace Sample
             {
                 var res = await reader.ReadToEndAsync();
                 // асинхронное чтение из файла
-                Thread.Sleep(8000);
+                await Task.Delay(3000);
                 Console.WriteLine("Datas from file: " + res);
             }
 
