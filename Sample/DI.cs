@@ -8,10 +8,11 @@ using System.Web.Mvc;
 
 namespace Sample
 {
+    
     namespace DI
     {
         // Constructor Injection 
-       
+
         public class CustomerBusinessLogic
         {
             ICustomerDataAccess _dataAccess;
@@ -65,8 +66,77 @@ namespace Sample
             }
         }
     }
-
+    
     namespace DI.Autofac
+    {
+        void Run()
+        {
+            var container = ContainerConfig.Configure();
+            var employeeSerive = container.Resolve<IEmployeeService>();
+            employeeSerive.PrintEmployee(1);
+            employeeSerive.PrintEmployee(2);
+            employeeSerive.PrintEmployee(3);
+
+        }
+        public class ContainerConfig
+        {
+            public static IContainer Configure()
+            {
+                var builder = new ContainerBuilder();
+                builder.RegisterType<EmployeeRepository>().As<IEmployeeRepository>();
+                builder.RegisterType<EmployeeService>().As<IEmployeeService>();
+                return builder.Build();
+            }
+
+        }
+        public class EmployeeService : IEmployeeService
+        {
+
+            private readonly IEmployeeRepository _repository;
+            public EmployeeService(IEmployeeRepository repository)
+            {
+                _repository = repository;
+            }
+            public void PrintEmployee(int id)
+            {
+                var employee = _repository.FindEmployee(id);
+                Console.WriteLine(employee != null ? $"Id:{employee.Id}, Name:{employee.Name}"
+                    : $"Employee with Id:{id} not found.");
+            }
+
+        }
+        public interface IEmployeeService
+        {
+            void PrintEmployee(int id);
+        }
+        public class EmployeeRepository : IEmployeeRepository
+        {
+            private readonly List<Employee> _data = new List<Employee>()
+            {
+                new Employee { Id = 1, Name = "Ivan"},
+                new Employee { Id = 2, Name = "Max"},
+            };
+
+            public Employee FindEmployee(int id)
+            {
+                return _data.FirstOrDefault(x => x.Id == id);
+            }
+        }
+        public interface IEmployeeRepository
+        {
+            Employee FindEmployee(int id);
+        }
+
+        public class Employee
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+        }
+
+
+    }
+    
+    namespace DI.AutofacMvc
     {
         public class Book
         {
@@ -157,4 +227,6 @@ namespace Sample
             */
 
     }
+
+
 }
