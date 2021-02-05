@@ -103,7 +103,19 @@ namespace Sample
     }
     namespace XML
     {
-        public class Xml { }
+        public class Xml
+        {
+            static void LinqToXml()
+            {
+                var path = "Path => xml files"
+                XDocument doc = XDocument.Load($"{path}");
+                IEnumerable<XElement> orders = doc.Element("Orders").Descendants("Order");
+                int orderId = 100;
+                IEnumerable<XElement> order = orders.Where(x => x.Attribute("id").Value == orderId.ToString());
+                XElement adress = order.Select(x => x.Element("Adress")).FirstOrDefault();
+                string name = adress.Element("Name").Value;
+            }
+        }
     }
     namespace PDF
     {
