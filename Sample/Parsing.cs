@@ -105,7 +105,7 @@ namespace Sample
     {
         public class Xml
         {
-            static void ReadToXml()
+            private static void ReadToXml()
             {
                 var path = "Path => xml files";
                 XDocument doc = XDocument.Load($"{path}");
@@ -114,6 +114,27 @@ namespace Sample
                 IEnumerable<XElement> order = orders.Where(x => x.Attribute("id").Value == orderId.ToString());
                 XElement adress = order.Select(x => x.Element("Adress")).FirstOrDefault();
                 string name = adress.Element("Name").Value;
+            }
+            private static void ReadXml()
+            {
+                string path = @"C:\Users\gulievvsh\source\repos\OracleNet\OracleTest\userlist.xml";
+                XDocument xdoc = XDocument.Load(path);
+                foreach (XElement userElement in xdoc.Element("userlist").Elements("user"))
+                {
+                    XAttribute idAttribute = userElement.Attribute("Id");
+                    XElement firstNamElement = userElement.Element("FirstName");
+                    XElement lastNameElement = userElement.Element("LastName");
+                    XElement agElement = userElement.Element("Age");
+
+                    if (idAttribute != null && firstNamElement != null && lastNameElement != null && agElement != null)
+                    {
+                        Console.WriteLine($"Id: {idAttribute.Value}");
+                        Console.WriteLine($"FirstName: {firstNamElement.Value}");
+                        Console.WriteLine($"LastName: {lastNameElement.Value}");
+                        Console.WriteLine($"Age: {agElement.Value}");
+                    }
+                    Console.WriteLine();
+                }
             }
             private static void WriteXml()
             {
