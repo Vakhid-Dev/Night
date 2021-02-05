@@ -105,15 +105,33 @@ namespace Sample
     {
         public class Xml
         {
-            static void LinqToXml()
+            static void ReadToXml()
             {
-                var path = "Path => xml files"
+                var path = "Path => xml files";
                 XDocument doc = XDocument.Load($"{path}");
                 IEnumerable<XElement> orders = doc.Element("Orders").Descendants("Order");
                 int orderId = 100;
                 IEnumerable<XElement> order = orders.Where(x => x.Attribute("id").Value == orderId.ToString());
                 XElement adress = order.Select(x => x.Element("Adress")).FirstOrDefault();
                 string name = adress.Element("Name").Value;
+            }
+            private static void WriteXml()
+            {
+                XDocument doc = new XDocument();
+                doc.Add(new XElement("userlist"));
+                string filepath = "Path => xml files";
+                foreach (var user in list.users)
+                {
+                    doc.Root.Add(new XElement("user",
+                        new XAttribute("Id", user.Id),
+                        new XElement("FirstName", user.FirstName),
+                        new XElement("LastName", user.LastName),
+                        new XElement("Age", user.Age)));
+
+                }
+
+
+                doc.Save(filepath);
             }
         }
     }
