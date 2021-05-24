@@ -160,4 +160,60 @@ namespace Sample
     {
         public class PDF { }
     }
+    //  Read and write file from DataBase
+      public class Image
+    {
+        public Image(int id, string filename, string title, byte[] data)
+        {
+            Id = id;
+            FileName = filename;
+            Title = title;
+            Data = data;
+        }
+        public int Id { get; private set; }
+        public string FileName { get; private set; }
+        public string Title { get; private set; }
+        public byte[] Data { get; private set; }
+    }
+    {
+        private static async Task ReadFileFromDatabaseAsync()
+        {
+            string connectionString = ConfigurationManager.ConnectionStrings["Test"].ConnectionString;
+            List<Image> images = new List<Image>();
+            using (var connection = new SqlConnection(connectionString))
+            {
+                var cmd = @"SELECT * FROM Files";
+                await connection.OpenAsync();
+                Console.WriteLine("Connection opened");
+                SqlCommand command = new SqlCommand(cmd, connection);
+                using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        int id = reader.GetInt32(0);
+                        string filename = reader.GetString(1);
+                        string title = reader.GetString(2);
+                        byte[] data = (byte[])reader.GetValue(3);
+
+                        Image image = new Image(id, filename, title, data);
+                        images.Add(image);
+                    }
+                }
+                await connection.CloseAsync();
+                // сохраним первый файл из списка
+                if (images.Count > 0)
+                {
+                    using (FileStream fs = new FileStream(images[0].FileName, FileMode.OpenOrCreate))
+                    {
+
+                        fs.Write(images[0].Data, 0, images[0].Data.Length);
+                      
+                        Console.WriteLine($"Файл {images[0].Title} сохранен");
+                    }
+                }
+            }
+
+           
+        }
+    }
 }
